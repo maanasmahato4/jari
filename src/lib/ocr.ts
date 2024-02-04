@@ -6,7 +6,7 @@ import('nanoid').then((module) => {
 	nanoid = module.nanoid;
 });
 
-async function extractText(source_path: string): Promise<void> {
+async function extractText(source_path: string): Promise<boolean> {
 	try {
 		const targetPath = path.join(
 			process.cwd(),
@@ -19,8 +19,13 @@ async function extractText(source_path: string): Promise<void> {
 			fs.mkdirSync('files');
 		}
 		await fs.promises.appendFile(targetPath, result.data.text);
-	} catch (error) {
-		console.error(error);
+		return true;
+	} catch (error: unknown) {
+		if (error instanceof Error) {
+			throw new Error(error.message);
+		} else {
+			throw 'error generating text file';
+		}
 	}
 }
 
